@@ -136,4 +136,44 @@ php artisan route:list
 - you can exclude any default routes 
 
 ``` 
-Route::resource('photos', PhotoController::class ['only'=>['index', 'show']]);
+Route::resource('photos', PhotoController::class, ['only' => [ 'index', 'show' ]]); 
+
+Route::resource('photos', PhotoController::class, ['except' => [ 'create', 'store', 'update', 'destroy' ]]); 
+```
+
+### Migration Rollback 
+
+- **Migration Steps**: Each time a migration is performed using the artisan command, a step counter is increased.
+  
+- **Rollback**: Allows you to undo the last x number of steps.
+  
+- **Reset**: Resets will completely drop and re-run ALL migrations. Note: rollback and reset actions are destructive, meaning that all records within the tables affected by the migration are destroyed.
+
+---
+
+#### Advanced Migrations
+
+- **Modifying Tables**: To modify a table using a migration, use the following artisan command:
+  ```
+  php artisan make:migration migration_name --table=table_name
+  ```
+
+  
+#### Migration Structures
+  ```
+  return new class extends Migration {
+    public function up() {
+        Schema::table('images', function (Blueprint $table) {
+            $table->foreign('gallery_id')
+                ->references('id')->on('galleries')
+                ->onDelete('cascade');
+        });
+    }
+
+    public function down() {
+        Schema::table('images', function (Blueprint $table) {
+            $table->dropForeign(['gallery_id']);
+        });
+    }
+};
+  ```
