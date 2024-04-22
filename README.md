@@ -122,3 +122,18 @@ public function forceDelete($id){
 ```
 Gallery::onlyTrashed()->forceDelete();
 ```
+
+### Resource Routes 
+- auto generate all associated routes ising the standard name method name convention in the contoller 
+``` 
+Route::resource('resource', controller) 
+
+and 
+
+php artisan route:list
+```
+
+- you can exclude any default routes 
+
+``` 
+Route::resource('photos', PhotoController::class ['only'=>['index', 'show']]);
