@@ -301,3 +301,23 @@ Database\Seeders\ImageSeeder .............................. 57.60ms DONE
 ```
     @include('partials.displayErrors')
 ```
+
+### Sharing Data with all Views 
+- sometimes you need to share data with every view 
+    - header or footer 
+
+#### Lets update the Master 
+<img src="image.png" alt="alt text" width="600">    
+    
+
+- Notice that we’re calling two variables $lastPostedImage and $count
+- If the project is small enough that there will not be many share calls, the ideal provider is the __app/Providers/AppServiceProvider.php__
+
+- with __AppServiceProvider__ you must first import the __View__ facade 
+<img src="Screenshot 2024-04-22 202521.png" alt="alt text" width="300">
+
+- anything in the boot will be excuted before teh view is rendered 
+<img src="Screenshot 2024-04-22 202646.png" alt="alt text" width="700">
+
+### View Composer 
+- the second method of passing data to many views is __View Composer__ 
