@@ -177,3 +177,127 @@ Route::resource('photos', PhotoController::class, ['except' => [ 'create', 'stor
     }
 };
   ```
+#### Disabling and Enabling Foreign Key Constraints 
+```
+Schema::enableForeignKeyConstraints();
+Schema::disableForeignKeyConstraints();
+```
+### Database Seeding
+- database seeding allows you to generate any number of "test" records in any or all of the tables 
+- Laravel offers a utility called __Faker__ 
+- __Faker__ is a package which allows you to generate various types of data such as people, addresses, phone numbers, lorem ispum text, payments, files & images and much more 
+
+- Laravel offers a seeder class that calls other seeder classes 
+
+- the __USER__ model contains the __HasFactory__ trait which allows the model to access __factory()__ method 
+
+```
+class User extends Authentcatable {
+    use HasApiTokens, HasFactory, Notifiable
+
+}
+```
+- Laravel uses __Factories__ to define the content of a generated record 
+- A full list of information that can be generated can be found on the Faker website (https://github.com/fzaninotto/Faker)
+```
+class UserFactory extends Factory {
+       public function definition() {
+        return [            
+          'name' => fake()->name(),            
+          'email' => fake()->safeEmail(),
+          'email_verified_at' => now(),
+          'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password            
+          'remember_token' => Str::random(10),
+        ];
+    }
+}
+```
+
+- when generating multiple models worth of info, a seperate seeder class should be generated 
+
+- To create image records you first need to create __ImageSeeder__ and override the __run()__ method to call the models __factory()__ 
+    ```
+    php artisan make:seed ImageSeeder
+    ```
+
+    ```
+    namespace Database\Seeders;
+    
+    use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+    use Illuminate\Database\Seeder;
+    
+    class ImageSeeder extends Seeder {
+        public function run() {
+            \App\Models\Image::factory(10)->create();
+        }
+    }
+    
+    ```
+
+- Must register the new ImageSeeder class in tthe autoloader   
+    ```
+    composer dump-autoload
+    ```
+- Next open the Database Seeder and add the following code 
+    ```
+    namespace Database\Seeders;
+    
+    // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+    use Illuminate\Database\Seeder;
+    use Illuminate\Support\Facades\DB;
+    
+    class DatabaseSeeder extends Seeder {
+        public function run() {
+            \App\Models\User::factory(10)->create();
+            DB::table('images')->truncate();
+            $this->call(ImageSeeder::class);
+        }
+    }
+    
+    ```
+
+- create a new factory called ImageFactory 
+- php artisan make:factory ImageFactor
+```
+php artisian make:factory factory_name 
+```
+
+- add the following to the __definition()__ method 
+```
+class ImageFactory extends Factory {
+        public function definition() {
+                    $galleryIds = \App\Models\Gallery::pluck('id')->all();
+                    return [
+                            'filename' => fake()->word . ".jpg",            'description' => fake()->sentence,
+                            'gallery_id' => fake()->randomElemen($galleryIds)        
+                        ];
+                    }
+                }
+
+```
+
+- FINALLY tell laravel to seed the database: 
+```
+php artisan db:seed 
+```
+- should appear like 
+```
+INFO  Seeding database.  
+
+Database\Seeders\ImageSeeder .............................. 57.60ms DONE
+```
+
+### View Partials 
+- Because of __CRUD__ in laravel it is common to have repetitive code 
+- to use partials extract the duplicate code to a seperate file 
+```
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        {{ $error }} <br>
+    @endforeach
+@endif
+```
+- the partial may now be referenced by using __@include__ 
+```
+    @include('partials.displayErrors')
+```
