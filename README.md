@@ -319,5 +319,19 @@ Database\Seeders\ImageSeeder .............................. 57.60ms DONE
 - anything in the boot will be excuted before teh view is rendered 
 <img src="Screenshot 2024-04-22 202646.png" alt="alt text" width="700">
 
+
 ### View Composer 
 - the second method of passing data to many views is __View Composer__ 
+- slightly more complicated and should be used if project is larger and contains more complex code 
+#### adding to the previous example 
+<img src="Screenshot 2024-04-22 203248.png" alt="alt text" width="700">
+
+- note the first arg is an array of multuple views 
+- * can be provided to bootstrap all views 
+
+- if the project becomes too big then the clousre should be replaced with a dedicated class 
+```
+View::composer('examplePage', 'App\Http\ViewComposers\ExampleClass');
+```
+
+### Many to Many relationship 
